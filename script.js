@@ -24,10 +24,6 @@ const gameboard = (() => {
             return;
         } else {
             board[x][y] = player;
-            if (checkBoard() != undefined) {
-                displayBoard();
-                console.log(checkBoard() + " WINS!");
-            }
         }
     }
 
@@ -107,7 +103,22 @@ function newGame (player1, player2) {
 
     gameboard.resetBoard();
 
-    let turnCounter = 0;
+    let turnCounter = 1;
 
+    return {player1, player2}
 
+    function takeTurn(x, y) {
+        if (turnCounter % 2 === 0) {
+            gameboard.placeMarker(player2, x, y);            
+        } else {
+            gameboard.placeMarker(player1, x, y);
+        }
+        if (gameboard.checkBoard() != undefined) {
+                gameboard.displayBoard();
+                console.log(gameboard.checkBoard() + " WINS!");
+                gameboard.resetBoard();
+            }
+    }
+
+    return { takeTurn };
 }
