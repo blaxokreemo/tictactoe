@@ -105,8 +105,6 @@ function newGame (player1, player2) {
 
     let turnCounter = 1;
 
-    return {player1, player2}
-
     function takeTurn(x, y) {
         if (turnCounter % 2 === 0) {
             gameboard.placeMarker(player2, x, y);            
@@ -114,8 +112,9 @@ function newGame (player1, player2) {
             gameboard.placeMarker(player1, x, y);
         }
         if (gameboard.checkBoard() != undefined) {
+                const winner = checkBoard() === player1.getName() ? player1.getName() : player2.getName();
                 gameboard.displayBoard();
-                console.log(gameboard.checkBoard() + " WINS!");
+                console.log(winner + " WINS!");
                 gameboard.resetBoard();
             }
     }
