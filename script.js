@@ -71,16 +71,16 @@ const gameboard = (() => {
 
     const board = newBoard();
 
-    return {placeMarker, displayBoard, resetBoard}
+    return {placeMarker, displayBoard, resetBoard, checkBoard}
 
 })()
 
 function createPlayer (name) {
     let marker = 0
-    const name = name;
+    const playerName = name;
 
     function getName () {
-        return name;
+        return playerName;
     }
 
     function getMarker () {
@@ -95,10 +95,10 @@ function createPlayer (name) {
 }
 
 
-function newGame (player1, player2) {
-    const player1 = createPlayer(player1);
+function newGame (p1, p2) {
+    const player1 = createPlayer(p1);
     player1.setMarker(1);
-    const player2 = createPlayer(player2);
+    const player2 = createPlayer(p2);
     player2.setMarker(2);
 
     gameboard.resetBoard();
@@ -106,18 +106,21 @@ function newGame (player1, player2) {
     let turnCounter = 1;
 
     function takeTurn(x, y) {
-        if (turnCounter % 2 === 0) {
-            gameboard.placeMarker(player2, x, y);            
+        if (turnCounter % 2 == 0) {
+            gameboard.placeMarker(player2.getMarker(), x, y);            
         } else {
-            gameboard.placeMarker(player1, x, y);
+            gameboard.placeMarker(player1.getMarker(), x, y);
         }
+        gameboard.displayBoard();
+        turnCounter = ++turnCounter; 
         if (gameboard.checkBoard() != undefined) {
-                const winner = checkBoard() === player1.getName() ? player1.getName() : player2.getName();
-                gameboard.displayBoard();
+                const winner = gameboard.checkBoard() === player1.getName() ? player1.getName() : player2.getName();
                 console.log(winner + " WINS!");
                 gameboard.resetBoard();
+                turnCounter = 1;
             }
     }
 
     return { takeTurn };
 }
+
