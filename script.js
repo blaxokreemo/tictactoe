@@ -41,6 +41,8 @@ const gameboard = (() => {
     }
 
     function checkBoard () {
+
+        
         let hor1 = board[0];
         let hor2 = board[1];
         let hor3 = board[2];
