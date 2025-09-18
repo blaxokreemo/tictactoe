@@ -1,8 +1,4 @@
 
-//Event Listeners
-
-
-
 // Game Functionality
 
 const gameboard = (() => {
@@ -16,10 +12,7 @@ const gameboard = (() => {
     }
 
     function placeMarker (player, x, y) {
-        let marker = "X"
-        if (player = 2) {
-            marker = "O"
-        }
+        let marker = player == 2 ? "O" : "X";
 
         if (board[x][y] != "") {
             console.log("Someone already picked that spot.");
@@ -81,63 +74,99 @@ const gameboard = (() => {
 
 })()
 
-function createPlayer (name) {
-    let marker = 0
-    const playerName = name;
-
-    function getName () {
-        return playerName;
-    }
-
-    function getMarker () {
-        return marker;
-    }
-
-    function setMarker (num) {
-        marker = num;
-    }
-
-    return { getName, setMarker, getMarker }
+function startGame () {
+    let p1Name = getElementById('player1').value;
+    let p2Name = getElementById('player2').value;
+    return newGame(p1Name, p2Name);
 }
 
+function createPlayer (name, marker) {
+        let playerMarker = marker
+        let playerName = name;
 
-function newGame (p1, p2) {
+        function setName (newName) {
+            playerName = newName;
+        }
+
+        function getName () {
+            return playerName;
+        }
+
+        function getMarker () {
+            return playerMarker;
+        }
+
+        function setMarker (num) {
+            playerMarker = num;
+        }
+
+        return { setName, getName, setMarker, getMarker }
+    }
+
+
+const player1 = createPlayer("Player 1", 1);
+const player2 = createPlayer("Player 2", 2);
+
+
+const gameplay = (() => {
     
-     
-    const player1 = createPlayer(p1);
-    player1.setMarker(1);
-    const player2 = createPlayer(p2);
-    player2.setMarker(2);
-
-    gameboard.resetBoard();
-
     let turnCounter = 1;
+    let playSwitch = false;
+
+    function newGame () {
+
+        let p1Name = document.getElementById('player1').value;
+        let p2Name = document.getElementById('player2').value;
+        player1.setName(p1Name);
+        player2.setName(p2Name);
+
+        gameboard.resetBoard();
+
+        playSwitch = true;
+        turnCounter = 1;
+
+        return {player1, player2}
+    }
+
+    function click (e) {
+        if (playSwitch == false) {
+            return;
+        } else {
+            takeTurn(e);
+        }
+    }
 
     function takeTurn(e) {
 
-        let markerX = parseInt(e.target.id.slice(1, 2))
-        let markerY = parseInt(e.target.id.slice(3))
+            let markerX = parseInt(e.target.id.slice(1, 2))
+            let markerY = parseInt(e.target.id.slice(3))
 
-        if (turnCounter % 2 == 0) {
-            gameboard.placeMarker(player2.getMarker(), markerX, markerY);            
-        } else {
-            gameboard.placeMarker(player1.getMarker(), markerX, markerY);
-        }
-        gameboard.displayBoard();
-        turnCounter = ++turnCounter; 
-        if (gameboard.checkBoard() != undefined) {
-                const winner = gameboard.checkBoard() === player1.getName() ? player1.getName() : player2.getName();
-                console.log(winner + " WINS!");
-                gameboard.resetBoard();
-                turnCounter = 1;
+            if (turnCounter % 2 == 0) {
+                gameboard.placeMarker(player2.getMarker(), markerX, markerY);            
+            } else {
+                gameboard.placeMarker(player1.getMarker(), markerX, markerY);
             }
-    }
+            gameboard.displayBoard();
+            turnCounter = ++turnCounter; 
+            if (gameboard.checkBoard() != undefined) {
+                    const winner = gameboard.checkBoard() === player1.getMarker() ? player1.getName() : player2.getName();
+                    console.log(winner + " WINS!");
+                    gameboard.resetBoard();
+                    turnCounter = 1;
+                    playSwitch = false;
+                }
+        }
 
-    let cells = document.getElementsByClassName('cell')
-    Array.from(cells).forEach(element => {
-        element.addEventListener('click', takeTurn)
+        return { newGame, click };
+})();
+
+
+//Event Listeners
+
+const startButton = document.getElementById('start');
+startButton.addEventListener('click', gameplay.newGame);
+
+let cells = document.getElementsByClassName('cell')
+Array.from(cells).forEach(element => {
+    element.addEventListener('click', gameplay.click)
     });
-
-    return { takeTurn };
-}
-
