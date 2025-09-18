@@ -1,12 +1,9 @@
-// const gameboard = (function () {
-    
-//     const board = ["", "", "", "", "", "", "", "", ""];
-//     const updateBoard = function () {
 
-//     }
+//Event Listeners
 
-// })()
 
+
+// Game Functionality
 
 const gameboard = (() => {
           
@@ -19,11 +16,18 @@ const gameboard = (() => {
     }
 
     function placeMarker (player, x, y) {
+        let marker = "X"
+        if (player = 2) {
+            marker = "O"
+        }
+
         if (board[x][y] != "") {
             console.log("Someone already picked that spot.");
             return;
         } else {
             board[x][y] = player;
+            let target = document.getElementById(`r${x}c${y}`);
+            target.innerHTML = marker;
         }
     }
 
@@ -98,6 +102,8 @@ function createPlayer (name) {
 
 
 function newGame (p1, p2) {
+    
+     
     const player1 = createPlayer(p1);
     player1.setMarker(1);
     const player2 = createPlayer(p2);
@@ -107,11 +113,15 @@ function newGame (p1, p2) {
 
     let turnCounter = 1;
 
-    function takeTurn(x, y) {
+    function takeTurn(e) {
+
+        let markerX = parseInt(e.target.id.slice(1, 2))
+        let markerY = parseInt(e.target.id.slice(3))
+
         if (turnCounter % 2 == 0) {
-            gameboard.placeMarker(player2.getMarker(), x, y);            
+            gameboard.placeMarker(player2.getMarker(), markerX, markerY);            
         } else {
-            gameboard.placeMarker(player1.getMarker(), x, y);
+            gameboard.placeMarker(player1.getMarker(), markerX, markerY);
         }
         gameboard.displayBoard();
         turnCounter = ++turnCounter; 
@@ -122,6 +132,11 @@ function newGame (p1, p2) {
                 turnCounter = 1;
             }
     }
+
+    let cells = document.getElementsByClassName('cell')
+    Array.from(cells).forEach(element => {
+        element.addEventListener('click', takeTurn)
+    });
 
     return { takeTurn };
 }
